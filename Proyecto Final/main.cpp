@@ -1,3 +1,24 @@
+/* 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above notice and this permission notice shall be included in all copies
+ * or substantial portions of the Software.
+ *
+ */
+
 //
 //  main.cpp
 //  Proyecto Final de Graficas Computacionales
@@ -51,8 +72,35 @@ vector<Basura> listaBasuras;
 static GLuint texName[36];
 static GLfloat zPos = -60.0f;
 
-
 Sound background = Sound("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/BackgroundSong.wav");
+
+/**
+ * Funcion de inicializacion donde empiezan todas las variables y que se ejecuta cada vez que reinician el juego
+ */
+void init() {
+    xBola = 3;
+    dirX = 2;
+    yBola = 0;
+    dirY = 4;
+    zBola = 0;
+    dirZ = -5;
+    //enMarcha = false;
+    //suelta = false;
+    //cont = 0;
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glShadeModel(GL_FLAT);
+    tiempo = 0;
+    objeto.setPositions(0, 0, -100);
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 2; k++) {
+                listaBasuras.push_back(Basura((-170 + (55 * i)), //En x
+                                              (164 - (96 * j)), //En y
+                                              (-80 + (45 * k))));
+            }
+        }
+    }
+}
 
 /**
  * Hace una textura desde una imagen, y regresa el ID para esa textura en especifico.
@@ -145,6 +193,8 @@ string creaFormato(int t){
     return hora;
 }
 
+
+
 /**
  * Esta funcion controla los movimientos de la pelota en las 3 dimensiones para que se vea un buen movimiento.
  */
@@ -162,22 +212,24 @@ void controlBola (int v){
     
     if (xBola < -149.333) { //Limite izquierda
         xBola = -149.333;
-        dirX = -dirX - 7;
+        dirX = -dirX - 5;
     }
     
-    if (yBola > 149.333) { //Limite derecha
+    if (yBola > 149.333) { //Limite arriba
         yBola = 149.333;
-        dirY = -dirY - 7;
+        dirY = -dirY - 5;
     }
     
-    if (yBola < -149.333) { //Limite izquierda
+    if (yBola < -149.333) { //Limite abajo
         yBola = -149.333;
-        dirY = -dirY - 6;
+        dirY = -dirY - 5;
     }
     
-    if(zBola <= -100){
+    if(zBola <= -100){ //Fondo de la pantalla
         zBola = -100;
         dirZ = -dirZ;
+        dirX += 2;
+        dirY += 1;
     }
     
     if(zBola > 45){
@@ -195,38 +247,21 @@ void controlBola (int v){
             dirX = -dirX;
             dirY = -dirY;
             dirZ = -dirZ;
+            dirX += 2;
+            dirY += 1;
             listaBasuras.erase(listaBasuras.begin() + i );
             break;
         }
+    }
+    if (listaBasuras.size() == 0) {
+        init();
+        showMenu = true;
     }
     glutPostRedisplay();
     glutTimerFunc(60, controlBola, 0);
 }
 
-/**
- * Funcion de inicializacion donde empiezan todas las variables y que se ejecuta cada vez que reinician el juego
- */
-void init() {
-    xBola = 3;
-    dirX = 1;
-    yBola = 0;
-    dirY = 3;
-    zBola = 0;
-    dirZ = -4;
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glShadeModel(GL_FLAT);
-    tiempo = 0;
-    objeto.setPositions(0, 0, -100);
-    for (int i = 0; i < 7; i++) {
-        for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < 2; k++) {
-                listaBasuras.push_back(Basura((-170 + (55 * i)), //En x
-                                              (164 - (96 * j)), //En y
-                                              (-80 + (45 * k))));
-            }
-        }
-    }
-}
+
 
 /**
  * Funcion para dibujar texto en el videojuego
@@ -268,7 +303,6 @@ void myKeyboard(unsigned char theKey, int mouseX, int mouseY) {
         case 'R':
             borraBasurasActuales();
             init();
-            glutPostRedisplay();
             vidas = 3;
             break;
         case 'p':
@@ -287,6 +321,7 @@ void myKeyboard(unsigned char theKey, int mouseX, int mouseY) {
         default:
             break;
     }
+    glutPostRedisplay();
 }
 
 /**
@@ -453,7 +488,6 @@ void myDisplay() {
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
     } else {
-        //objeto.draw();
         for (int i = 0; i < listaBasuras.size(); i++) {
             listaBasuras[i].draw();
         }
@@ -487,6 +521,7 @@ void myDisplay() {
             glutWireSphere(1, 30, 30);
             glPopMatrix();
         }
+        /*
         glPushMatrix();
         glTranslatef(1, 1, zBola);
         glScaled(400, 400, 10);
@@ -507,12 +542,14 @@ void myDisplay() {
         glutSolidCube(1);
         glPopMatrix();
         //Fin de lineas de apoyo
+        
         glColor3f(1.0, 1.0, 1.0);
         glPushMatrix();
         glTranslatef(0, 0, -30);
         glScaled(400, 400, 139);
         glutWireCube(1);
-        glPopMatrix();
+        glPopMatrix();*/
+        
         GLUquadricObj *qobj;
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texName[11]);
@@ -676,7 +713,7 @@ int main(int argc, char * argv[]) {
     glutMouseFunc(myMouse);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(winWidth/2, winHeight);
-    glutInitWindowPosition(winWidth, 0);
+    glutInitWindowPosition(winWidth + 10, 0);
     glutCreateWindow("Instrucciones");
     glutDisplayFunc(myDisplay2);
     glutMainLoop();
