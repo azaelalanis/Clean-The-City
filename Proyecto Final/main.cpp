@@ -49,7 +49,7 @@ static GLuint texName[36];
 static GLfloat zPos = -60.0f;
 
 
-Sound background = Sound("/Users/ivandiaz/Desktop/Proyecto Final/BackgroundSong.wav");
+Sound background = Sound("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/BackgroundSong.wav");
 
 //Makes the image into a texture, and returns the id of the texture
 void loadTexture(Image* image,int k)
@@ -88,19 +88,18 @@ void initRendering()
     glEnable(GL_NORMALIZE);*/
     // glEnable(GL_COLOR_MATERIAL);
     glGenTextures(5, texName); //Make room for our texture
-    Image* image = loadBMP("/Users/ivandiaz/Downloads/Tercer Parcial/Semana12/ImagenesMemorama/ciervo.bmp");
+    Image* image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen1.bmp");
     loadTexture(image,i++);
-    image = loadBMP("/Users/ivandiaz/Downloads/Tercer Parcial/Semana12/ImagenesMemorama/Lobo.bmp");
+    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen2.bmp");
     loadTexture(image,i++);
-    image = loadBMP("/Users/ivandiaz/Downloads/Tercer Parcial/Semana12/ImagenesMemorama/Brick.bmp");
+    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/Brick.bmp");
     loadTexture(image,i++);
-    image = loadBMP("/Users/ivandiaz/Downloads/Tercer Parcial/Semana12/ImagenesMemorama/Clouds.bmp");
+    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/Clouds.bmp");
     loadTexture(image,i++);
-    image = loadBMP("/Users/ivandiaz/Downloads/Tercer Parcial/Semana12/ImagenesMemorama/Foto.bmp");
+    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/City.bmp");
     loadTexture(image,i++);
-    image = loadBMP("/Users/ivandiaz/Downloads/Tercer Parcial/Semana12/ImagenesMemorama/dragon.bmp");
+    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen3.bmp");
     loadTexture(image,i++);
-    // image = loadBMP("/Users/mariaroque/Imagenes/ojo.bmp");
     delete image;
 }
 
