@@ -51,43 +51,20 @@ static GLfloat zPos = -60.0f;
 
 Sound background = Sound("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/BackgroundSong.wav");
 
-//Makes the image into a texture, and returns the id of the texture
-void loadTexture(Image* image,int k)
-{
-    
-    glBindTexture(GL_TEXTURE_2D, texName[k]); //Tell OpenGL which texture to edit
-    
+void loadTexture(Image* image,int k) {
+    glBindTexture(GL_TEXTURE_2D, texName[k]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    
-    
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    
-    //Map the image to the texture
-    glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
-                 0,                            //0 for now
-                 GL_RGB,                       //Format OpenGL uses for image
-                 image->width, image->height,  //Width and height
-                 0,                            //The border of the image
-                 GL_RGB, //GL_RGB, because pixels are stored in RGB format
-                 GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
-                 //as unsigned numbers
-                 image->pixels);               //The actual pixel data
-    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
 }
 
-void initRendering()
-{
+void initRendering(){
     int i=0;
-    /*glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE);*/
-    // glEnable(GL_COLOR_MATERIAL);
-    glGenTextures(5, texName); //Make room for our texture
+    glGenTextures(5, texName);
     Image* image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen1.bmp");
     loadTexture(image,i++);
     image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen2.bmp");
@@ -103,8 +80,7 @@ void initRendering()
     delete image;
 }
 
-void handleResize(int w, int h)
-{
+void handleResize(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -121,7 +97,7 @@ void sound (int value){
     }
 }
 
-void cuentaTiempo(int i) { //funcion del timer que se utilizara en el programa
+void cuentaTiempo(int i) {
     if (i == 1) {
         if (enMarcha == true) {
             tiempo+=1;
@@ -131,7 +107,7 @@ void cuentaTiempo(int i) { //funcion del timer que se utilizara en el programa
     }
 }
 
-string creaFormato(int t){ //funcion que te crea el formato en base a un numero entero que representa el tiempo transcurrido
+string creaFormato(int t){
     string hora;
     int min, sec, msec;
     msec = t % 10;
@@ -180,7 +156,7 @@ void controlBola (int v){
         dirZ = -dirZ;
     }
     
-    if(zBola > 45){ //Hardcoded
+    if(zBola > 45){
         cont = 1;
         suelta = false;
         vidas--;
@@ -240,7 +216,7 @@ void borraBasurasActuales() {
 void myKeyboard(unsigned char theKey, int mouseX, int mouseY) {
     switch (theKey) {
         case 27:
-            exit(-1); //Se acaba el programa
+            exit(-1);
             break;
         case 'i':
         case 'I':
@@ -278,7 +254,6 @@ void onMenu(int opcion) {
         case 0:
             break;
         case 1: //Iniciar
-            
             break;
         case 2: //Pausa
             enMarcha = false;
@@ -337,8 +312,6 @@ void SpecialKey(int key, int x, int y) {
 }
 
 void myMouseMotionPass(int mouseX, int mouseY){
-    cout<< "mouse X = " << mouseX << endl;
-    cout<< "mouse Y = " << mouseY << endl;
     if(mouseX <= 76){
         xRaqueta = -149.333;
     } else if (mouseX >= 524) {
@@ -354,23 +327,14 @@ void myMouseMotionPass(int mouseX, int mouseY){
     } else {
         yRaqueta = (((float)mouseY) / 600.0f * 400.0f - 200.0f) * -1.0f;
     }
-    cout<< "raqueta X = " << xRaqueta << endl;
-    cout<< "raqueta Y = " << yRaqueta << endl;
     glutPostRedisplay();
 }
 
 void myMouse(int button, int state, int x, int y){
-    //cout<<"X: " << x << endl;
-    //cout<<"Y: " << y << endl;
     GLint xmouse = (x - 400) * 2;
     GLint ymouse = winHeight - y * 2;
-    //cout<<"Xmouse: " << xmouse << endl;
-    //cout<<"Ymouse: " << ymouse << endl;
-    
     if(button == GLUT_LEFT_BUTTON){
         if(state == GLUT_DOWN){
-            //cout <<"xraqueta: " << xRaqueta << endl;
-            //cout <<"yraqueta: " << yRaqueta << endl;
             cont++;
             if (xmouse >= -308 && xmouse <= -76 && ymouse >= 58 && ymouse <= 172){
                 showMenu = false;
@@ -396,19 +360,12 @@ void reshape (int ancho, int alto) {
     gluLookAt(0, 0, 200, 0, 0, 0, 0, 1, 0);
 }
 
-void myDisplay()
-{
+void myDisplay() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    if (showMenu)
-    {
-        //glColor3f(0.0, 0.0, 0.0);
+    if (showMenu) {
         glEnable(GL_TEXTURE_2D);
-        
         glBindTexture(GL_TEXTURE_2D, texName[11]);
-        
         glPushMatrix();
-        
         glBindTexture(GL_TEXTURE_2D, texName[4]);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
@@ -451,14 +408,10 @@ void myDisplay()
         drawGeneralText(jugar.data(),jugar.size(), -30, 40);
         drawGeneralText(titulo.data(),titulo.size(), -100, 150);
         
-    }
-    else
-    {
-        //objeto.draw();
+    } else {
         for (int i = 0; i < listaBasuras.size(); i++) {
             listaBasuras[i].draw();
         }
-        
         glColor3f(1.0, 1.0, 1.0);
         
         glPushMatrix();
@@ -474,8 +427,7 @@ void myDisplay()
         glPopMatrix();
         
         //bola
-        if (!suelta)
-        {
+        if (!suelta) {
             xBola = xRaqueta;
             yBola = yRaqueta;
             glPushMatrix();
@@ -484,9 +436,7 @@ void myDisplay()
             glScalef(10, 10, 10);
             glutWireSphere(1, 30, 30);
             glPopMatrix();
-        }
-        else
-        {
+        } else {
             glPushMatrix();
             glColor3f(1.0, 1.0, 1.0);
             glTranslatef(xBola, yBola, zBola);
@@ -523,118 +473,76 @@ void myDisplay()
         glPopMatrix();
         
         GLUquadricObj *qobj;
-        
         glEnable(GL_TEXTURE_2D);
-        
         glBindTexture(GL_TEXTURE_2D, texName[11]);
-        
         glPushMatrix();
+        // Floor
+        glBindTexture(GL_TEXTURE_2D, texName[2]);
+        // glutSolidSphere(1.0,10,10);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-200.0f, -200.0f, -200);
+        
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(200.0f, -200.0f, -200);
+        
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(200.0f, -200.0f, 200);
+        
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-200.0f, -200.0f, 200);
+        glEnd();
+        
+        //Ceiling
+        glBindTexture(GL_TEXTURE_2D, texName[3]);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-200.0f, 200.0f, -200);
+        
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(200.0f, 200.0f, -200);
+        
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(200.0f, 200.0f, 200);
+        
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-200.0f, 200.0f, 200);
+        glEnd();
+        // Left Wall
+        glBindTexture(GL_TEXTURE_2D, texName[4]);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-200.0f, -200.0f, 200);
+        
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(-200.0f, -200.0f, -200);
+        
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(-200.0f, 200.0f, -200);
+        
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-200.0f, 200.0f, 200);
+        glEnd();
         
         
-           /* glBindTexture(GL_TEXTURE_2D, texName[1]);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex3f(-200.0f, -200.0f, z);
-            
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(-200.0f, -200.0f, z - 10.0f);
-            
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(-200.0f, 200.0f, z - 10.0f);
-            
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(-200.0f, 200.0f, z);
-            glEnd();*/
-            
-            //FONDO
-            /* glBindTexture(GL_TEXTURE_2D, texName[0]);
-             // glutSolidSphere(1.0,10,10);
-             glBegin(GL_QUADS);
-             glTexCoord2f(0.0f, 0.0f);
-             glVertex3f(-200.0f, -200.0f, -200);
-             
-             glTexCoord2f(1.0f, 0.0f);
-             glVertex3f(200.0f, -200.0f, -200);
-             
-             glTexCoord2f(1.0f, 1.0f);
-             glVertex3f(200.0f, 200.0f, 200);
-             
-             glTexCoord2f(0.0f, 1.0f);
-             glVertex3f(-200.0f, 200.0f, 200);
-             glEnd();*/
-            
-            // Floor
-            
-            glBindTexture(GL_TEXTURE_2D, texName[2]);
-            
-            // glutSolidSphere(1.0,10,10);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex3f(-200.0f, -200.0f, -200);
-            
-            glTexCoord2f(1.0f, 0.0f);
-            glVertex3f(200.0f, -200.0f, -200);
-            
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(200.0f, -200.0f, 200);
-            
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(-200.0f, -200.0f, 200);
-            glEnd();
-            
-            //Ceiling
-            glBindTexture(GL_TEXTURE_2D, texName[3]);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(-200.0f, 200.0f, -200);
-            
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(200.0f, 200.0f, -200);
-            
-            glTexCoord2f(1.0f, 0.0f);
-            glVertex3f(200.0f, 200.0f, 200);
+        // Right Wall
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(200.0f, 200.0f, 200);
         
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex3f(-200.0f, 200.0f, 200);
-            glEnd();
-            
-            
-            // Left Wall
-            glBindTexture(GL_TEXTURE_2D, texName[4]);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex3f(-200.0f, -200.0f, 200);
-            
-            glTexCoord2f(1.0f, 0.0f);
-            glVertex3f(-200.0f, -200.0f, -200);
-            
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(-200.0f, 200.0f, -200);
-            
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(-200.0f, 200.0f, 200);
-            glEnd();
-            
-            
-            // Right Wall
-            glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(200.0f, 200.0f, 200);
-            
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(200.0f, 200.0f, -200);
-            
-            glTexCoord2f(1.0f, 0.0f);
-            glVertex3f(200.0f, -200.0f, -200);
-            
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex3f(200.0f, -200.0f, 200);
-            glEnd();
-            
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(200.0f, 200.0f, -200);
+        
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(200.0f, -200.0f, -200);
+        
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(200.0f, -200.0f, 200);
+        glEnd();
+        
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
     }
-    
     glColor3f(1.0, 0.0, 0.0);
     string aux = creaFormato(tiempo);
     string vida = "Vidas = ";
@@ -644,7 +552,6 @@ void myDisplay()
     drawGeneralText(aux.data(), aux.size(), -130, -195);
     drawGeneralText(vida.data(), vida.size(), 130, -195);
     drawGeneralText(vidas2.data(), vidas2.size(), 185, -195);
-    
     glutSwapBuffers();
 }
 
@@ -653,7 +560,6 @@ void myDisplay2 () {
     glLoadIdentity();
     glClearColor(0.2, 0.2, 0.2, 1.0);
     glColor3ub(255, 255, 255);
-    //string titulo2 = "Clean The City - Instrucciones";
     string linea1 = " El juego esta inspirado en Brick Breaker y lo que";
     string linea2 = " tienes que hacer es mover la 'paleta' para hacer";
     string linea3 = " que la pelota rebote y destruya la mayor cantidad";
@@ -696,24 +602,19 @@ int main(int argc, char * argv[]) {
     glEnable(GL_DEPTH_TEST);
     creacionMenu();
     initRendering();
-    //glClearColor(1.0,1.0,1.0,1.0);
     glutDisplayFunc(myDisplay);
     glutTimerFunc(100, controlBola, 0);
     glutTimerFunc(0, sound, 0);
-    
     glutReshapeFunc(reshape);
     glutKeyboardFunc(myKeyboard);
     glutSpecialFunc(SpecialKey);
     glutPassiveMotionFunc(myMouseMotionPass);
     glutMouseFunc(myMouse);
-    
-    //Ventana 2
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(winWidth/2, winHeight);
     glutInitWindowPosition(winWidth, 0);
     glutCreateWindow("Instrucciones");
     glutDisplayFunc(myDisplay2);
-    //glutTimerFunc(100, cuentaTiempo, 1);
     glutMainLoop();
     return 0;
 }
@@ -722,24 +623,17 @@ int main(int argc, char * argv[]) {
 #include <fstream>
 
 #include "imageloader.h"
-
 using namespace std;
-
-Image::Image(char* ps, int w, int h) : pixels(ps), width(w), height(h)
-{
-    
+Image::Image(char* ps, int w, int h) : pixels(ps), width(w), height(h) {
 }
 
-Image::~Image()
-{
+Image::~Image(){
     delete[] pixels;
 }
 
-namespace
-{
+namespace {
     //Converts a four-character array to an integer, using little-endian form
-    int toInt(const char* bytes)
-    {
+    int toInt(const char* bytes) {
         return (int)(((unsigned char)bytes[3] << 24) |
                      ((unsigned char)bytes[2] << 16) |
                      ((unsigned char)bytes[1] << 8) |
@@ -747,23 +641,20 @@ namespace
     }
     
     //Converts a two-character array to a short, using little-endian form
-    short toShort(const char* bytes)
-    {
+    short toShort(const char* bytes) {
         return (short)(((unsigned char)bytes[1] << 8) |
                        (unsigned char)bytes[0]);
     }
     
     //Reads the next four bytes as an integer, using little-endian form
-    int readInt(ifstream &input)
-    {
+    int readInt(ifstream &input) {
         char buffer[4];
         input.read(buffer, 4);
         return toInt(buffer);
     }
     
     //Reads the next two bytes as a short, using little-endian form
-    short readShort(ifstream &input)
-    {
+    short readShort(ifstream &input) {
         char buffer[2];
         input.read(buffer, 2);
         return toShort(buffer);
@@ -771,46 +662,37 @@ namespace
     
     //Just like auto_ptr, but for arrays
     template<class T>
-    class auto_array
-    {
+    class auto_array {
     private:
         T* array;
         mutable bool isReleased;
     public:
         explicit auto_array(T* array_ = NULL) :
-        array(array_), isReleased(false)
-        {
+        array(array_), isReleased(false) {
         }
         
-        auto_array(const auto_array<T> &aarray)
-        {
+        auto_array(const auto_array<T> &aarray) {
             array = aarray.array;
             isReleased = aarray.isReleased;
             aarray.isReleased = true;
         }
         
-        ~auto_array()
-        {
-            if (!isReleased && array != NULL)
-            {
+        ~auto_array() {
+            if (!isReleased && array != NULL) {
                 delete[] array;
             }
         }
         
-        T* get() const
-        {
+        T* get() const {
             return array;
         }
         
-        T &operator*() const
-        {
+        T &operator*() const {
             return *array;
         }
         
-        void operator=(const auto_array<T> &aarray)
-        {
-            if (!isReleased && array != NULL)
-            {
+        void operator=(const auto_array<T> &aarray) {
+            if (!isReleased && array != NULL) {
                 delete[] array;
             }
             array = aarray.array;
@@ -818,40 +700,33 @@ namespace
             aarray.isReleased = true;
         }
         
-        T* operator->() const
-        {
+        T* operator->() const {
             return array;
         }
         
-        T* release()
-        {
+        T* release() {
             isReleased = true;
             return array;
         }
         
-        void reset(T* array_ = NULL)
-        {
-            if (!isReleased && array != NULL)
-            {
+        void reset(T* array_ = NULL) {
+            if (!isReleased && array != NULL) {
                 delete[] array;
             }
             array = array_;
         }
         
-        T* operator+(int i)
-        {
+        T* operator+(int i) {
             return array + i;
         }
         
-        T &operator[](int i)
-        {
+        T &operator[](int i) {
             return array[i];
         }
     };
 }
 
-Image* loadBMP(const char* filename)
-{
+Image* loadBMP(const char* filename) {
     ifstream input;
     input.open(filename, ifstream::binary);
     assert(!input.fail() || !"Could not find file");
@@ -865,8 +740,7 @@ Image* loadBMP(const char* filename)
     int headerSize = readInt(input);
     int width;
     int height;
-    switch (headerSize)
-    {
+    switch (headerSize) {
         case 40:
             //V3
             width = readInt(input);
@@ -922,4 +796,3 @@ Image* loadBMP(const char* filename)
     input.close();
     return new Image(pixels2.release(), width, height);
 }
-
