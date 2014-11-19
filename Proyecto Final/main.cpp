@@ -370,13 +370,10 @@ void myDisplay() {
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-200.0f, -200.0f, 200);
-        
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(200.0f, -200.0f, -200);
-        
         glTexCoord2f(1.0f, 1.0f);
         glVertex3f(-200.0f, 200.0f, -200);
-        
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(200.0f, 200.0f, 200);
         glEnd();
@@ -476,9 +473,22 @@ void myDisplay() {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texName[11]);
         glPushMatrix();
+        
+        //Background
+        glBindTexture(GL_TEXTURE_2D, texName[3]);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-200.0f, -200.0f, -95);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(200.0f, -200.0f, -95);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(200.0f, 200.0f, -95);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-200.0f, 200.0f, -95);
+        glEnd();
+        
         // Floor
         glBindTexture(GL_TEXTURE_2D, texName[2]);
-        // glutSolidSphere(1.0,10,10);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-200.0f, -200.0f, -200);
