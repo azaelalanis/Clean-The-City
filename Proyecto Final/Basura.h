@@ -29,7 +29,7 @@ public:
         resiste = 1;
         visible = true;
         radio = 20;
-        altura = 80;
+        altura = 70;
     }
     
     Basura (double posX, double posY, double posZ) {
@@ -39,7 +39,7 @@ public:
         resiste = 1;
         visible = true;
         radio = 20;
-        altura = 80;
+        altura = 70;
     }
     
     void setPositions(double posX, double posY, double posZ){

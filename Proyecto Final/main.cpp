@@ -22,6 +22,9 @@
 
 using namespace std;
 
+/**
+ * Declaracion de variables globales iniciales.
+ */
 int angulo = 0;
 int winWidth = 600;
 int winHeight = 600;
@@ -32,7 +35,7 @@ int dirX = 1;
 float yBola = 0;
 int dirY = 3;
 float zBola = 0;
-int dirZ = -3;
+int dirZ = -4;
 bool enMarcha = true;
 bool showMenu = true;
 string jugar = "JUGAR";
@@ -41,7 +44,7 @@ string titulo2 = "Clean The City - Instrucciones";
 bool musica = true;
 bool suelta = false;
 int cont = 0;
-int vidas = 3;
+double vidas = 3;
 int tiempo = 0;
 Basura objeto = Basura();
 vector<Basura> listaBasuras;
@@ -51,6 +54,9 @@ static GLfloat zPos = -60.0f;
 
 Sound background = Sound("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/BackgroundSong.wav");
 
+/**
+ * Hace una textura desde una imagen, y regresa el ID para esa textura en especifico.
+ */
 void loadTexture(Image* image,int k) {
     glBindTexture(GL_TEXTURE_2D, texName[k]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -62,12 +68,15 @@ void loadTexture(Image* image,int k) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
 }
 
+/**
+ * Extrae los archivos .bmp para poder cargar las imagenes correctamente
+ */
 void initRendering(){
     int i=0;
     glGenTextures(5, texName);
     Image* image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen1.bmp");
     loadTexture(image,i++);
-    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen2.bmp");
+    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/Start.bmp");
     loadTexture(image,i++);
     image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/Brick.bmp");
     loadTexture(image,i++);
@@ -75,11 +84,14 @@ void initRendering(){
     loadTexture(image,i++);
     image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/City.bmp");
     loadTexture(image,i++);
-    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen3.bmp");
+    image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/GameOver.bmp");
     loadTexture(image,i++);
     delete image;
 }
 
+/**
+ * Maneja el Resize del videojuego.
+ */
 void handleResize(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
@@ -90,6 +102,9 @@ void handleResize(int w, int h) {
     glTranslatef(0.0f, 1.0f, -6.0f);
 }
 
+/**
+ * Esta funcion timer hace que la musica de fondo corra y la repite cada 90 segundos que es la duracion de la cancion.
+ */
 void sound (int value){
     if (musica) {
         background.PlaySound();
@@ -97,7 +112,10 @@ void sound (int value){
     }
 }
 
-void cuentaTiempo(int i) {
+/**
+ * Timer encargado de medir el tiempo de la partida del usuario.
+ */
+void cuentaTiempo(int i) { //Funcion del timer que se utilizara en el programa
     if (i == 1) {
         if (enMarcha == true) {
             tiempo+=1;
@@ -107,6 +125,9 @@ void cuentaTiempo(int i) {
     }
 }
 
+/**
+ * Esta funcion se encarga de generar el formato del tiempo en base a una variable entera que representa el tiempo transcurrido
+ */
 string creaFormato(int t){
     string hora;
     int min, sec, msec;
@@ -124,6 +145,9 @@ string creaFormato(int t){
     return hora;
 }
 
+/**
+ * Esta funcion controla los movimientos de la pelota en las 3 dimensiones para que se vea un buen movimiento.
+ */
 void controlBola (int v){
     if (enMarcha && suelta && !showMenu){
         xBola += dirX;
@@ -133,22 +157,22 @@ void controlBola (int v){
     
     if (xBola > 149.333) { //Limite derecha
         xBola = 149.333;
-        dirX = -dirX;
+        dirX = -dirX - 5;
     }
     
     if (xBola < -149.333) { //Limite izquierda
         xBola = -149.333;
-        dirX = -dirX;
+        dirX = -dirX - 7;
     }
     
     if (yBola > 149.333) { //Limite derecha
         yBola = 149.333;
-        dirY = -dirY;
+        dirY = -dirY - 7;
     }
     
     if (yBola < -149.333) { //Limite izquierda
         yBola = -149.333;
-        dirY = -dirY;
+        dirY = -dirY - 6;
     }
     
     if(zBola <= -100){
@@ -159,15 +183,13 @@ void controlBola (int v){
     if(zBola > 45){
         cont = 1;
         suelta = false;
-        vidas--;
+        vidas = vidas - .5;
     }
     
     if ((yBola < yRaqueta + 50 && yBola > yRaqueta - 50) && (xBola > xRaqueta - 50 && xBola < xRaqueta + 50) && zBola > 40){
         zBola = 40;
         dirZ = -dirZ;
     }
-    
-    objeto.colision(xBola, yBola, zBola, 5);
     for (int i = 0; i < listaBasuras.size(); i++) {
         if (listaBasuras[i].colision(xBola, yBola, zBola, 5)){
             dirX = -dirX;
@@ -181,12 +203,20 @@ void controlBola (int v){
     glutTimerFunc(60, controlBola, 0);
 }
 
+/**
+ * Funcion de inicializacion donde empiezan todas las variables y que se ejecuta cada vez que reinician el juego
+ */
 void init() {
+    xBola = 3;
+    dirX = 1;
+    yBola = 0;
+    dirY = 3;
+    zBola = 0;
+    dirZ = -4;
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_FLAT);
     tiempo = 0;
     objeto.setPositions(0, 0, -100);
-    int cont = 0;
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 2; k++) {
@@ -198,6 +228,9 @@ void init() {
     }
 }
 
+/**
+ * Funcion para dibujar texto en el videojuego
+ */
 void drawNumber (float x, float y, float z, char *string){
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -207,16 +240,22 @@ void drawNumber (float x, float y, float z, char *string){
     glPopMatrix();
 }
 
+/**
+ * Borra el vector de basuras restante en caso de que hayan quedado en el mapa para que no haya "basuras fantasma"
+ */
 void borraBasurasActuales() {
     for (int i = 0; i < listaBasuras.size(); i++) {
         listaBasuras.erase(listaBasuras.begin() + i );
     }
 }
 
+/**
+ * Funcion que controla el teclado y sus acciones
+ */
 void myKeyboard(unsigned char theKey, int mouseX, int mouseY) {
     switch (theKey) {
         case 27:
-            exit(-1);
+            exit(-1); //Se acaba el programa
             break;
         case 'i':
         case 'I':
@@ -230,6 +269,7 @@ void myKeyboard(unsigned char theKey, int mouseX, int mouseY) {
             borraBasurasActuales();
             init();
             glutPostRedisplay();
+            vidas = 3;
             break;
         case 'p':
         case 'P':
@@ -240,7 +280,7 @@ void myKeyboard(unsigned char theKey, int mouseX, int mouseY) {
             musica = !musica;
             if (!musica){
                 background.StopSound();
-            }else{
+            } else {
                 sound(0);
             }
             break;
@@ -249,11 +289,15 @@ void myKeyboard(unsigned char theKey, int mouseX, int mouseY) {
     }
 }
 
+/**
+ * Funcion que controla en caso de que seleccionen una opcion del menu con el mouse
+ */
 void onMenu(int opcion) {
     switch(opcion) {
         case 0:
             break;
-        case 1: //Iniciar
+        case 1:
+            
             break;
         case 2: //Pausa
             enMarcha = false;
@@ -265,7 +309,7 @@ void onMenu(int opcion) {
             musica = !musica;
             if (!musica){
                 background.StopSound();
-            }else{
+            } else {
                 sound(0);
             }
             break;
@@ -278,6 +322,9 @@ void onMenu(int opcion) {
     glutPostRedisplay();
 }
 
+/**
+ * Funcion que genera el menu al inicio del juego
+ */
 void creacionMenu(void) {
     int menuFondo, menuPrincipal;
     menuFondo = glutCreateMenu(onMenu);
@@ -293,6 +340,9 @@ void creacionMenu(void) {
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
+/**
+ * Funcion que escribe texto en la pantalla
+ */
 void drawGeneralText(const char *text, int length, double x, double y){
     glRasterPos2d(x, y);
     for(int i=0; i<length; i++){
@@ -300,6 +350,9 @@ void drawGeneralText(const char *text, int length, double x, double y){
     }
 }
 
+/**
+ * Funcion que escribe texto en la pantalla
+ */
 void drawGeneralText2(const char *text, int length, double x, double y){
     glRasterPos2d(x, y);
     for(int i=0; i<length; i++){
@@ -307,10 +360,9 @@ void drawGeneralText2(const char *text, int length, double x, double y){
     }
 }
 
-void SpecialKey(int key, int x, int y) {
-    
-}
-
+/**
+ * Funcion que utilizamos para controlar el movimiento de la paleta que servira para pegarle a la pelota
+ */
 void myMouseMotionPass(int mouseX, int mouseY){
     if(mouseX <= 76){
         xRaqueta = -149.333;
@@ -319,7 +371,6 @@ void myMouseMotionPass(int mouseX, int mouseY){
     } else {
         xRaqueta = ((float)mouseX) / 600.0f * 400.0f - 200.0f;
     }
-    
     if(mouseY <= 76){
         yRaqueta = 149.333;
     } else if (mouseY >= 524){
@@ -330,24 +381,43 @@ void myMouseMotionPass(int mouseX, int mouseY){
     glutPostRedisplay();
 }
 
+/**
+ * Funcion para controlar los clicks del mouse
+ */
 void myMouse(int button, int state, int x, int y){
     GLint xmouse = (x - 400) * 2;
     GLint ymouse = winHeight - y * 2;
     if(button == GLUT_LEFT_BUTTON){
         if(state == GLUT_DOWN){
             cont++;
-            if (xmouse >= -308 && xmouse <= -76 && ymouse >= 58 && ymouse <= 172){
-                showMenu = false;
+            
+            if (showMenu){
+                if (xmouse >= -464 && xmouse <= 56 && ymouse >= -350 && ymouse <= -194){
+                    showMenu = false;
+                }
             }
             if (cont == 2){
                 suelta = true;
                 cuentaTiempo(1);
+            }
+            
+            if (vidas == 0){
+                if (xmouse >= -464 && xmouse <= 56 && ymouse >= -350 && ymouse <= -194){
+                    borraBasurasActuales();
+                    init();
+                    glutPostRedisplay();
+                    vidas = 3;
+                    enMarcha = true;
+                }
             }
             glutPostRedisplay();
         }
     }
 }
 
+/**
+ * Funcion para controlar el reshape de la pantalla
+ */
 void reshape (int ancho, int alto) {
     winWidth = ancho;
     winHeight = ancho;
@@ -360,70 +430,46 @@ void reshape (int ancho, int alto) {
     gluLookAt(0, 0, 200, 0, 0, 0, 0, 1, 0);
 }
 
+/**
+ * Funcion para pintar todas las imagenes, formas, quadrics y cualquier texto en la pantalla
+ */
 void myDisplay() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (showMenu) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texName[11]);
         glPushMatrix();
-        glBindTexture(GL_TEXTURE_2D, texName[4]);
+        glBindTexture(GL_TEXTURE_2D, texName[1]);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-200.0f, -200.0f, 200);
+        glVertex3f(-200.0f, -200.0f, 40);
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(200.0f, -200.0f, -200);
+        glVertex3f(200.0f, -200.0f, 40);
         glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(-200.0f, 200.0f, -200);
+        glVertex3f(200.0f, 200.0f, 40);
         glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(200.0f, 200.0f, 200);
+        glVertex3f(-200.0f, 200.0f, 40);
         glEnd();
-        
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
-        
-        glPushMatrix();
-        glColor3f(1.0, 1.0, 0.0);
-        glTranslatef(3, 50, 0);
-        glScalef(1.0, 0.5, 0.0);
-        glutWireCube(100.0);
-        glPopMatrix();
-        
-        glPushMatrix();
-        glColor3f(1.0, 1.0, 0.0);
-        glTranslatef(3, -20, 0);
-        glScalef(1.0, 0.5, 0.0);
-        glutWireCube(100.0);
-        glPopMatrix();
-        
-        glPushMatrix();
-        glColor3f(1.0, 1.0, 0.0);
-        glTranslatef(3, -90, 0);
-        glScalef(1.0, 0.5, 0.0);
-        glutWireCube(100.0);
-        glPopMatrix();
-        
-        drawGeneralText(jugar.data(),jugar.size(), -30, 40);
-        drawGeneralText(titulo.data(),titulo.size(), -100, 150);
-        
     } else {
+        //objeto.draw();
         for (int i = 0; i < listaBasuras.size(); i++) {
             listaBasuras[i].draw();
         }
         glColor3f(1.0, 1.0, 1.0);
-        
         glPushMatrix();
         glTranslatef(0, 0, 169);
         glScaled(400, 400, 140);
         glutWireCube(1);
         glPopMatrix();
-        
         glPushMatrix();
         glTranslatef(xRaqueta, yRaqueta, 37.0);
         glScalef(100.0, 100.0, 5.00);
         glutWireCube(1.0);
         glPopMatrix();
         
-        //bola
+        //Bola
         if (!suelta) {
             xBola = xRaqueta;
             yBola = yRaqueta;
@@ -441,7 +487,6 @@ void myDisplay() {
             glutWireSphere(1, 30, 30);
             glPopMatrix();
         }
-        
         glPushMatrix();
         glTranslatef(1, 1, zBola);
         glScaled(400, 400, 10);
@@ -468,23 +513,22 @@ void myDisplay() {
         glScaled(400, 400, 139);
         glutWireCube(1);
         glPopMatrix();
-        
         GLUquadricObj *qobj;
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texName[11]);
         glPushMatrix();
-        
-        //Background
-        glBindTexture(GL_TEXTURE_2D, texName[3]);
+    
+        //FONDO
+        glBindTexture(GL_TEXTURE_2D, texName[2]);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-200.0f, -200.0f, -95);
+        glVertex3f(-200.0f, -200.0f, -99.9);
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(200.0f, -200.0f, -95);
+        glVertex3f(200.0f, -200.0f, -99.9);
         glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(200.0f, 200.0f, -95);
+        glVertex3f(200.0f, 200.0f, -99.9);
         glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(-200.0f, 200.0f, -95);
+        glVertex3f(-200.0f, 200.0f, -99.9);
         glEnd();
         
         // Floor
@@ -492,84 +536,92 @@ void myDisplay() {
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-200.0f, -200.0f, -200);
-        
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(200.0f, -200.0f, -200);
-        
         glTexCoord2f(1.0f, 1.0f);
         glVertex3f(200.0f, -200.0f, 200);
-        
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-200.0f, -200.0f, 200);
         glEnd();
         
         //Ceiling
-        glBindTexture(GL_TEXTURE_2D, texName[3]);
+        glBindTexture(GL_TEXTURE_2D, texName[2]);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-200.0f, 200.0f, -200);
-        
         glTexCoord2f(1.0f, 1.0f);
         glVertex3f(200.0f, 200.0f, -200);
-        
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(200.0f, 200.0f, 200);
-        
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-200.0f, 200.0f, 200);
         glEnd();
+        
         // Left Wall
-        glBindTexture(GL_TEXTURE_2D, texName[4]);
+        glBindTexture(GL_TEXTURE_2D, texName[2]);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-200.0f, -200.0f, 200);
-        
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(-200.0f, -200.0f, -200);
-        
         glTexCoord2f(1.0f, 1.0f);
         glVertex3f(-200.0f, 200.0f, -200);
-        
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-200.0f, 200.0f, 200);
         glEnd();
-        
-        
         // Right Wall
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(200.0f, 200.0f, 200);
-        
         glTexCoord2f(1.0f, 1.0f);
         glVertex3f(200.0f, 200.0f, -200);
-        
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(200.0f, -200.0f, -200);
-        
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(200.0f, -200.0f, 200);
         glEnd();
-        
+        if (vidas == 0){
+            glPushMatrix();
+            glBindTexture(GL_TEXTURE_2D, texName[6]);
+            glBegin(GL_QUADS);
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex3f(-200.0f, -200.0f, 40);
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex3f(200.0f, -200.0f, 40);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex3f(200.0f, 200.0f, 40);
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex3f(-200.0f, 200.0f, 40);
+            glEnd();
+            glPopMatrix();
+            suelta = false;
+            enMarcha = false;
+            cont = 0;
+        }
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
+        glColor3f(1.0, 0.0, 0.0);
+        string aux = creaFormato(tiempo);
+        string vida = "Vidas = ";
+        string tiempo = "Tiempo = ";
+        string vidas2 = to_string((int)vidas);
+        drawGeneralText(tiempo.data(), tiempo.size(), -200, -195);
+        drawGeneralText(aux.data(), aux.size(), -130, -195);
+        drawGeneralText(vida.data(), vida.size(), 130, -195);
+        drawGeneralText(vidas2.data(), vidas2.size(), 185, -195);
     }
-    glColor3f(1.0, 0.0, 0.0);
-    string aux = creaFormato(tiempo);
-    string vida = "Vidas = ";
-    string tiempo = "Tiempo = ";
-    string vidas2 = to_string(vidas);
-    drawGeneralText(tiempo.data(), tiempo.size(), -200, -195);
-    drawGeneralText(aux.data(), aux.size(), -130, -195);
-    drawGeneralText(vida.data(), vida.size(), 130, -195);
-    drawGeneralText(vidas2.data(), vidas2.size(), 185, -195);
     glutSwapBuffers();
 }
 
+/**
+ * Funcion auxiliar de display en donde se muestra informacion importante para el usuario
+ */
 void myDisplay2 () {
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glClearColor(0.2, 0.2, 0.2, 1.0);
     glColor3ub(255, 255, 255);
+    //string titulo2 = "Clean The City - Instrucciones";
     string linea1 = " El juego esta inspirado en Brick Breaker y lo que";
     string linea2 = " tienes que hacer es mover la 'paleta' para hacer";
     string linea3 = " que la pelota rebote y destruya la mayor cantidad";
@@ -602,6 +654,9 @@ void myDisplay2 () {
     glutSwapBuffers ();
 }
 
+/**
+ * Funcion inicial del videojuego
+ */
 int main(int argc, char * argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -617,7 +672,6 @@ int main(int argc, char * argv[]) {
     glutTimerFunc(0, sound, 0);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(myKeyboard);
-    glutSpecialFunc(SpecialKey);
     glutPassiveMotionFunc(myMouseMotionPass);
     glutMouseFunc(myMouse);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -633,17 +687,24 @@ int main(int argc, char * argv[]) {
 #include <fstream>
 
 #include "imageloader.h"
+
 using namespace std;
-Image::Image(char* ps, int w, int h) : pixels(ps), width(w), height(h) {
+
+Image::Image(char* ps, int w, int h) : pixels(ps), width(w), height(h)
+{
+    
 }
 
-Image::~Image(){
+Image::~Image()
+{
     delete[] pixels;
 }
 
-namespace {
+namespace
+{
     //Converts a four-character array to an integer, using little-endian form
-    int toInt(const char* bytes) {
+    int toInt(const char* bytes)
+    {
         return (int)(((unsigned char)bytes[3] << 24) |
                      ((unsigned char)bytes[2] << 16) |
                      ((unsigned char)bytes[1] << 8) |
@@ -651,20 +712,23 @@ namespace {
     }
     
     //Converts a two-character array to a short, using little-endian form
-    short toShort(const char* bytes) {
+    short toShort(const char* bytes)
+    {
         return (short)(((unsigned char)bytes[1] << 8) |
                        (unsigned char)bytes[0]);
     }
     
     //Reads the next four bytes as an integer, using little-endian form
-    int readInt(ifstream &input) {
+    int readInt(ifstream &input)
+    {
         char buffer[4];
         input.read(buffer, 4);
         return toInt(buffer);
     }
     
     //Reads the next two bytes as a short, using little-endian form
-    short readShort(ifstream &input) {
+    short readShort(ifstream &input)
+    {
         char buffer[2];
         input.read(buffer, 2);
         return toShort(buffer);
@@ -672,37 +736,46 @@ namespace {
     
     //Just like auto_ptr, but for arrays
     template<class T>
-    class auto_array {
+    class auto_array
+    {
     private:
         T* array;
         mutable bool isReleased;
     public:
         explicit auto_array(T* array_ = NULL) :
-        array(array_), isReleased(false) {
+        array(array_), isReleased(false)
+        {
         }
         
-        auto_array(const auto_array<T> &aarray) {
+        auto_array(const auto_array<T> &aarray)
+        {
             array = aarray.array;
             isReleased = aarray.isReleased;
             aarray.isReleased = true;
         }
         
-        ~auto_array() {
-            if (!isReleased && array != NULL) {
+        ~auto_array()
+        {
+            if (!isReleased && array != NULL)
+            {
                 delete[] array;
             }
         }
         
-        T* get() const {
+        T* get() const
+        {
             return array;
         }
         
-        T &operator*() const {
+        T &operator*() const
+        {
             return *array;
         }
         
-        void operator=(const auto_array<T> &aarray) {
-            if (!isReleased && array != NULL) {
+        void operator=(const auto_array<T> &aarray)
+        {
+            if (!isReleased && array != NULL)
+            {
                 delete[] array;
             }
             array = aarray.array;
@@ -710,33 +783,40 @@ namespace {
             aarray.isReleased = true;
         }
         
-        T* operator->() const {
+        T* operator->() const
+        {
             return array;
         }
         
-        T* release() {
+        T* release()
+        {
             isReleased = true;
             return array;
         }
         
-        void reset(T* array_ = NULL) {
-            if (!isReleased && array != NULL) {
+        void reset(T* array_ = NULL)
+        {
+            if (!isReleased && array != NULL)
+            {
                 delete[] array;
             }
             array = array_;
         }
         
-        T* operator+(int i) {
+        T* operator+(int i)
+        {
             return array + i;
         }
         
-        T &operator[](int i) {
+        T &operator[](int i)
+        {
             return array[i];
         }
     };
 }
 
-Image* loadBMP(const char* filename) {
+Image* loadBMP(const char* filename)
+{
     ifstream input;
     input.open(filename, ifstream::binary);
     assert(!input.fail() || !"Could not find file");
@@ -750,7 +830,8 @@ Image* loadBMP(const char* filename) {
     int headerSize = readInt(input);
     int width;
     int height;
-    switch (headerSize) {
+    switch (headerSize)
+    {
         case 40:
             //V3
             width = readInt(input);
@@ -806,3 +887,4 @@ Image* loadBMP(const char* filename) {
     input.close();
     return new Image(pixels2.release(), width, height);
 }
+
