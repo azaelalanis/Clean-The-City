@@ -17,17 +17,14 @@
  * The above notice and this permission notice shall be included in all copies
  * or substantial portions of the Software.
  *
+ * Basura.h
+ * Proyecto Final de Graficas Computacionales
+ *
+ * Clean The City (Brick Breaker)
+ *
+ * Created by Azael Alanis & Ivan Diaz on 10/13/14.
+ * Copyright (c) 2014 Azael Alanis & Ivan Diaz. All rights reserved.
  */
-
-//
-//  Basura.h
-//  Proyecto Final de Graficas Computacionales
-//
-//  Clean The City (Brick Breaker)
-//
-//  Created by Azael Alanis & Ivan Diaz on 10/13/14.
-//  Copyright (c) 2014 Azael Alanis & Ivan Diaz. All rights reserved.
-//
 
 #ifndef Proyecto_Final_Basura_h
 #define Proyecto_Final_Basura_h
