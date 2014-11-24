@@ -1,30 +1,12 @@
-/*
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
- *
- * Basura.h
- * Proyecto Final de Graficas Computacionales
- *
- * Clean The City (Brick Breaker)
- *
- * Created by Azael Alanis & Ivan Diaz on 10/13/14.
- * Copyright (c) 2014 Azael Alanis & Ivan Diaz. All rights reserved.
- */
+//
+//  Basura.h
+//  Proyecto Final de Graficas Computacionales
+//
+//  Clean The City (Brick Breaker)
+//
+//  Created by Azael Alanis & Ivan Diaz on 10/13/14.
+//  Copyright (c) 2014 Azael Alanis & Ivan Diaz. All rights reserved.
+//
 
 #ifndef Proyecto_Final_Basura_h
 #define Proyecto_Final_Basura_h
@@ -34,6 +16,7 @@ private:
     double posicionX;
     double posicionY;
     double posicionZ;
+    int angulo;
     int resiste;
     double radio;
     int altura;
@@ -48,6 +31,7 @@ public:
         visible = true;
         radio = 20;
         altura = 70;
+        angulo = 0;
     }
     
     Basura (double posX, double posY, double posZ) {
@@ -58,6 +42,7 @@ public:
         visible = true;
         radio = 20;
         altura = 70;
+        angulo = 0;
     }
     
     void setPositions(double posX, double posY, double posZ){
@@ -153,29 +138,27 @@ public:
         return false;
     }
     
+    
     void draw() {
         GLUquadricObj *qobj;
         qobj = gluNewQuadric();
-        
+        if(angulo < 360)
+            angulo+=3;
+        else
+            angulo = 0;
         if (visible) { // Si dibujarlo
             glPushMatrix();
             glColor3ub(90, 160, 160);
             glTranslatef(posicionX, posicionY, posicionZ);
-            glRotatef(90.0, 1.0, 0.0, 0.0);
+            glRotatef(-90.0, 1.0, 0.0, 0.0);
+            glRotated(angulo, 0, 0, 1);
             gluQuadricDrawStyle(qobj, GLU_FILL);
             gluQuadricNormals(qobj, GLU_FLAT);
-            gluCylinder(qobj, radio, radio, altura, 10, 10);
-            glPopMatrix();
-            
-            glPushMatrix();
-            glColor3f(0.0, 0.0, 0.0);
-            glTranslatef(posicionX, posicionY, posicionZ);
-            glRotatef(90.0, 1.0, 0.0, 0.0);
-            gluQuadricDrawStyle(qobj, GLU_LINE);
-            gluQuadricNormals(qobj, GLU_FLAT);
+            gluQuadricTexture(qobj, GLU_TRUE);
             gluCylinder(qobj, radio, radio, altura, 10, 10);
             glPopMatrix();
         }
+        //glDisable(GL_TEXTURE_2D);
     }
 };
 

@@ -1,30 +1,12 @@
-/* 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
- *
- * main.cpp
- * Proyecto Final de Graficas Computacionales
- *
- * Clean The City (Brick Breaker)
- *
- * Created by Azael Alanis & Ivan Diaz on 10/13/14.
- * Copyright (c) 2014 Azael Alanis & Ivan Diaz. All rights reserved.
- */
+//
+//  main.cpp
+//  Proyecto Final de Graficas Computacionales
+//
+//  Clean The City (Brick Breaker)
+//
+//  Created by Azael Alanis & Ivan Diaz on 10/13/14.
+//  Copyright (c) 2014 Azael Alanis & Ivan Diaz. All rights reserved.
+//
 
 #include <iostream>
 #include <GLUT/glut.h>
@@ -35,8 +17,8 @@
 #include <vector>
 #include "Basura.h"
 #include "Sound.h"
-#include "SOIL.h"
 #include "Imageloader.h"
+#include <string>
 
 using namespace std;
 
@@ -68,36 +50,10 @@ Basura objeto = Basura();
 vector<Basura> listaBasuras;
 static GLuint texName[36];
 static GLfloat zPos = -60.0f;
+int rot_angle = 0;
+
 
 Sound background = Sound("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/BackgroundSong.wav");
-
-/**
- * Funcion de inicializacion donde empiezan todas las variables y que se ejecuta cada vez que reinician el juego
- */
-void init() {
-    xBola = 3;
-    dirX = 2;
-    yBola = 0;
-    dirY = 4;
-    zBola = 0;
-    dirZ = -5;
-    //enMarcha = false;
-    //suelta = false;
-    //cont = 0;
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glShadeModel(GL_FLAT);
-    tiempo = 0;
-    objeto.setPositions(0, 0, -100);
-    for (int i = 0; i < 7; i++) {
-        for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < 2; k++) {
-                listaBasuras.push_back(Basura((-170 + (55 * i)), //En x
-                                              (164 - (96 * j)), //En y
-                                              (-80 + (45 * k))));
-            }
-        }
-    }
-}
 
 /**
  * Hace una textura desde una imagen, y regresa el ID para esa textura en especifico.
@@ -119,7 +75,7 @@ void loadTexture(Image* image,int k) {
 void initRendering(){
     int i=0;
     glGenTextures(5, texName);
-    Image* image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/imagen1.bmp");
+    Image* image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/textura.bmp");
     loadTexture(image,i++);
     image = loadBMP("/Users/azaelalanis/Documents/A01175470/7\ -\ Septimo\ Semestre/Graficas\ Computacionales/Proyecto\ Final/Clean-The-City/Fotos/Start.bmp");
     loadTexture(image,i++);
@@ -170,6 +126,16 @@ void cuentaTiempo(int i) { //Funcion del timer que se utilizara en el programa
     }
 }
 
+void rotaBotes (int x) {
+    
+    rot_angle += 10;
+    
+    if(rot_angle > 360)
+        rot_angle++;
+    
+    glutTimerFunc(100, rotaBotes, 1);
+}
+
 /**
  * Esta funcion se encarga de generar el formato del tiempo en base a una variable entera que representa el tiempo transcurrido
  */
@@ -190,7 +156,47 @@ string creaFormato(int t){
     return hora;
 }
 
-
+/**
+ * Funcion de inicializacion donde empiezan todas las variables y que se ejecuta cada vez que reinician el juego
+ */
+void init() {
+    
+    GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+    /* GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+     GLfloat position[] = { 0.0, 3.0, 2.0, 0.0 };
+     GLfloat lmodel_ambient[] = { 0.4, 0.4, 0.4, 1.0 };
+     GLfloat local_view[] = { 0.0 };*/
+    
+    glEnable(GL_DEPTH_TEST);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    /*glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+     glLightfv(GL_LIGHT0, GL_POSITION, position);
+     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+     glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, local_view);*/
+    
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    
+    xBola = 3;
+    dirX = 2;
+    yBola = 0;
+    dirY = 4;
+    zBola = 0;
+    dirZ = -5;
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glShadeModel(GL_FLAT);
+    tiempo = 0;
+    objeto.setPositions(0, 0, -100);
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 2; k++) {
+                listaBasuras.push_back(Basura((-170 + (55 * i)), //En x
+                                              (164 - (96 * j)), //En y
+                                              (-80 + (45 * k))));
+            }
+        }
+    }
+}
 
 /**
  * Esta funcion controla los movimientos de la pelota en las 3 dimensiones para que se vea un buen movimiento.
@@ -231,8 +237,14 @@ void controlBola (int v){
     
     if(zBola > 45){
         cont = 1;
+        xBola = 3;
+        dirX = 1;
+        yBola = 0;
+        dirY = 3;
+        zBola = 0;
+        dirZ = -4;
         suelta = false;
-        vidas = vidas - .5;
+        vidas = vidas - 1;
     }
     
     if ((yBola < yRaqueta + 50 && yBola > yRaqueta - 50) && (xBola > xRaqueta - 50 && xBola < xRaqueta + 50) && zBola > 40){
@@ -250,15 +262,13 @@ void controlBola (int v){
             break;
         }
     }
-    if (listaBasuras.size() == 0) {
+    if (listaBasuras.size() == 0){
         init();
         showMenu = true;
     }
     glutPostRedisplay();
     glutTimerFunc(60, controlBola, 0);
 }
-
-
 
 /**
  * Funcion para dibujar texto en el videojuego
@@ -425,10 +435,12 @@ void myMouse(int button, int state, int x, int y){
             
             if (showMenu){
                 if (xmouse >= -464 && xmouse <= 56 && ymouse >= -350 && ymouse <= -194){
+                    cont = 1;
                     showMenu = false;
                 }
             }
-            if (cont == 2){
+            
+            if (cont == 2 && !showMenu){
                 suelta = true;
                 cuentaTiempo(1);
             }
@@ -485,10 +497,29 @@ void myDisplay() {
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
     } else {
+        
+        
+        glEnable(GL_TEXTURE_2D);
+        
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //glMatrixMode(GL_TEXTURE); //Nueva
+        glBindTexture(GL_TEXTURE_2D, texName[0]);
+        
+        glPushMatrix();
+        
+        glTranslatef(0.0, -70.0, 0.0);
         for (int i = 0; i < listaBasuras.size(); i++) {
             listaBasuras[i].draw();
         }
-        glColor3f(1.0, 1.0, 1.0);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+        //glMatrixMode(GL_MODELVIEW);
+        
+        glDisable(GL_LIGHTING);
+        glColor3f(1.0, 1.0, 0.0);
         glPushMatrix();
         glTranslatef(0, 0, 169);
         glScaled(400, 400, 140);
@@ -499,59 +530,35 @@ void myDisplay() {
         glScalef(100.0, 100.0, 5.00);
         glutWireCube(1.0);
         glPopMatrix();
+        glEnable(GL_LIGHTING);
         
         //Bola
         if (!suelta) {
             xBola = xRaqueta;
             yBola = yRaqueta;
             glPushMatrix();
-            glColor3f(1.0, 1.0, 1.0);
+            glColor3f(0.0, 0.0, 0.0);
             glTranslatef(xBola, yBola, 1.0);
             glScalef(10, 10, 10);
-            glutWireSphere(1, 30, 30);
+            glutSolidSphere(1, 30, 30);
             glPopMatrix();
         } else {
             glPushMatrix();
-            glColor3f(1.0, 1.0, 1.0);
+            glColor3f(0.0, 0.0, 0.0);
             glTranslatef(xBola, yBola, zBola);
             glScalef(10, 10, 10);
-            glutWireSphere(1, 30, 30);
+            glutSolidSphere(1, 30, 30);
             glPopMatrix();
         }
-        /*
-        glPushMatrix();
-        glTranslatef(1, 1, zBola);
-        glScaled(400, 400, 10);
-        glutWireCube(1);
-        glPopMatrix();
         
-        //Lineas de apoyo
-        glColor3f(1.0, 0.0, 0.0);
-        glPushMatrix();
-        glTranslatef(1, yBola, zBola);
-        glScaled(400, 1, 1);
-        glutSolidCube(1);
-        glPopMatrix();
-        
-        glPushMatrix();
-        glTranslatef(xBola, 1, zBola);
-        glScaled(1, 400, 1);
-        glutSolidCube(1);
-        glPopMatrix();
-        //Fin de lineas de apoyo
-        
+        glDisable(GL_LIGHTING);
+        glDisable(GL_LIGHT0);
         glColor3f(1.0, 1.0, 1.0);
-        glPushMatrix();
-        glTranslatef(0, 0, -30);
-        glScaled(400, 400, 139);
-        glutWireCube(1);
-        glPopMatrix();*/
-        
-        GLUquadricObj *qobj;
+        //GLUquadricObj *qobj;
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texName[11]);
         glPushMatrix();
-    
+        
         //FONDO
         glBindTexture(GL_TEXTURE_2D, texName[2]);
         glBegin(GL_QUADS);
@@ -644,7 +651,12 @@ void myDisplay() {
         drawGeneralText(vida.data(), vida.size(), 130, -195);
         drawGeneralText(vidas2.data(), vidas2.size(), 185, -195);
     }
+    
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    
     glutSwapBuffers();
+    
 }
 
 /**
@@ -692,6 +704,7 @@ void myDisplay2 () {
  * Funcion inicial del videojuego
  */
 int main(int argc, char * argv[]) {
+    
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(winWidth, winHeight);
@@ -704,13 +717,14 @@ int main(int argc, char * argv[]) {
     glutDisplayFunc(myDisplay);
     glutTimerFunc(100, controlBola, 0);
     glutTimerFunc(0, sound, 0);
+    glutTimerFunc(100, rotaBotes, 1);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(myKeyboard);
     glutPassiveMotionFunc(myMouseMotionPass);
     glutMouseFunc(myMouse);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(winWidth/2, winHeight);
-    glutInitWindowPosition(winWidth + 10, 0);
+    glutInitWindowPosition(winWidth, 0);
     glutCreateWindow("Instrucciones");
     glutDisplayFunc(myDisplay2);
     glutMainLoop();
